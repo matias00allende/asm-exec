@@ -75,6 +75,11 @@ directamente en el runtime de la aplicación (patrón estándar de
   estándar de AWS)
 - Permisos IAM de `secretsmanager:GetSecretValue` sobre el secreto a resolver
 
+## Autor
+
+Matías Allende
+[LinkedIn](https://www.linkedin.com/in/matiasallende/) · matias.allende.contreras@gmail.com
+
 ## Licencia
 
 MIT. Ver [LICENSE](LICENSE).
