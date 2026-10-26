@@ -4,7 +4,7 @@ Resuelve un secreto de AWS Secrets Manager en runtime e inyecta su valor a un
 comando hijo, sin que ese valor pase nunca por la salida que un agente de IA
 (o cualquier proceso que capture stdout/stderr) pueda leer.
 
-## Por que existe
+## Por qué existe
 
 Cuando un agente de IA (Claude Code, o cualquier asistente con acceso a shell)
 necesita usar una credencial almacenada en AWS Secrets Manager, la forma obvia
@@ -16,10 +16,10 @@ modelo.
 
 `asm-exec` resuelve el secreto en un subproceso interno con stdout/stderr
 capturados y nunca impresos, y solo deja pasar al llamador la salida del
-**comando hijo** (por ejemplo, la respuesta de un `curl`). El valor del secreto
-en sí nunca aparece en ninguna salida visible.
+**comando hijo** (por ejemplo, la respuesta de un `curl`). El script no imprime
+el valor del secreto; si el comando hijo lo imprime, aparecerá en su salida.
 
-## Como funciona
+## Cómo funciona
 
 1. Ejecuta `aws secretsmanager get-secret-value` en un subproceso, capturando
    stdout/stderr sin imprimirlos.
@@ -61,9 +61,10 @@ internamente para construir el comando hijo.
 
 El valor resuelto queda visible en el `argv` del proceso hijo a nivel de
 sistema operativo (por ejemplo vía `ps aux` en el mismo host) mientras el
-comando corre. Esta es una limitación inherente a cualquier mecanismo de
-inyección vía variable de entorno o línea de comandos, no exclusiva de este
-script. Es aceptable para llamadas puntuales desde una sesión interactiva; no
+comando corre. Es una limitación común a los mecanismos que entregan el
+secreto al proceso hijo por línea de comandos, no exclusiva de este script. Si se
+entrega por variable de entorno, queda en el entorno del proceso, con una exposición
+distinta según el sistema operativo. Es aceptable para llamadas puntuales desde una sesión interactiva; no
 para servicios de larga duración - en ese caso corresponde resolver el secreto
 directamente en el runtime de la aplicación (patrón estándar de
 `get_secret_value`, sin necesidad de este wrapper).
